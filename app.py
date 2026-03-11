@@ -4,7 +4,11 @@ import numpy as np
 import pickle
 
 # load saved model pipeline
-model = pickle.load(open("model_pipeline.pkl", "rb"))
+import pickle
+import os
+
+model_path = os.path.join(os.path.dirname(__file__), "model_pipeline.pkl")
+model = pickle.load(open(model_path, "rb"))
 
 st.title("Credit Card Default Prediction")
 
@@ -54,4 +58,5 @@ if st.button("Predict Default"):
     else:
 
         st.success("Customer will NOT default payment")
+
 
