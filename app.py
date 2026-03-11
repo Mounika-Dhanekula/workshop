@@ -3,8 +3,7 @@ import numpy as np
 import joblib
 import os
 
-# Load saved model pipeline
-MODEL_FILENAME = "model_pipeline.joblib"  # safer than pickle
+MODEL_FILENAME = "model_pipeline.joblib"
 
 if not os.path.exists(MODEL_FILENAME):
     st.error(f"Model file '{MODEL_FILENAME}' not found. Please place it in the same folder as this script.")
@@ -17,12 +16,11 @@ else:
 
     if model:
         st.title("Credit Card Default Prediction")
-
         st.write("Enter customer details to predict whether they will default next month")
 
         # User Inputs
         LIMIT_BAL = st.number_input("Credit Limit Balance", min_value=0)
-        SEX = st.selectbox("Sex", [1, 2])  # 1=male, 2=female
+        SEX = st.selectbox("Sex", [1, 2])
         EDUCATION = st.selectbox("Education Level", [1, 2, 3, 4])
         MARRIAGE = st.selectbox("Marriage Status", [1, 2, 3])
         AGE = st.number_input("Age", min_value=18, max_value=100)
@@ -57,7 +55,6 @@ else:
 
             try:
                 prediction = model.predict(input_data)
-
                 if prediction[0] == 1:
                     st.error("Customer will DEFAULT payment next month")
                 else:
