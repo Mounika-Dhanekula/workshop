@@ -1,9 +1,10 @@
 import streamlit as st
 import numpy as np
 import joblib
+import pickle
 
 # load saved model pipeline
-model = joblib.load("model_pipeline.pkl")
+model = pickle.load(open("model_pipeline.pkl", "rb"))
 
 st.title("Credit Card Default Prediction")
 
@@ -51,4 +52,5 @@ if st.button("Predict Default"):
     if prediction[0] == 1:
         st.error("Customer will DEFAULT payment next month")
     else:
+
         st.success("Customer will NOT default payment")
