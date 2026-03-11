@@ -1,64 +1,66 @@
 import streamlit as st
 import numpy as np
-import pickle
-import os
+import joblib
 
-MODEL_FILENAME = "model.pkl"
+# page config
+st.set_page_config(
+    page_title="Credit Default Predictor",
+    page_icon="💳",
+    layout="wide"
+)
 
-if not os.path.exists(MODEL_FILENAME):
-    st.error(f"Model file '{MODEL_FILENAME}' not found. Please place it in the same folder as this script.")
-else:
-    try:
-        with open(MODEL_FILENAME, "rb") as f:
-            model = pickle.load(f)
-    except Exception as e:
-        st.error(f"Failed to load model: {e}")
-        model = None
+# load model
+model = joblib.load("model1.pkl")
 
-    if model:
-        st.title("Credit Card Default Prediction")
-        st.write("Enter customer details to predict whether they will default next month")
+st.title("💳 Credit Card Default Prediction")
 
-        # User Inputs
-        LIMIT_BAL = st.number_input("Credit Limit Balance", min_value=0)
-        SEX = st.selectbox("Sex", [1, 2])
-        EDUCATION = st.selectbox("Education Level", [1, 2, 3, 4])
-        MARRIAGE = st.selectbox("Marriage Status", [1, 2, 3])
-        AGE = st.number_input("Age", min_value=18, max_value=100)
+st.write("Enter customer financial details to predict default risk.")
 
-        PAY_0 = st.number_input("Repayment Status Sep")
-        PAY_2 = st.number_input("Repayment Status Aug")
-        PAY_3 = st.number_input("Repayment Status Jul")
-        PAY_4 = st.number_input("Repayment Status Jun")
-        PAY_5 = st.number_input("Repayment Status May")
-        PAY_6 = st.number_input("Repayment Status Apr")
+col1, col2, col3 = st.columns(3)
 
-        BILL_AMT1 = st.number_input("Bill Amount Sep")
-        BILL_AMT2 = st.number_input("Bill Amount Aug")
-        BILL_AMT3 = st.number_input("Bill Amount Jul")
-        BILL_AMT4 = st.number_input("Bill Amount Jun")
-        BILL_AMT5 = st.number_input("Bill Amount May")
-        BILL_AMT6 = st.number_input("Bill Amount Apr")
+with col1:
+    LIMIT_BAL = st.number_input("Limit Balance", 0)
+    SEX = st.selectbox("Sex", [1,2])
+    EDUCATION = st.selectbox("Education", [1,2,3,4])
+    MARRIAGE = st.selectbox("Marriage", [1,2,3])
+    AGE = st.number_input("Age", 18, 100)
 
-        PAY_AMT1 = st.number_input("Payment Amount Sep")
-        PAY_AMT2 = st.number_input("Payment Amount Aug")
-        PAY_AMT3 = st.number_input("Payment Amount Jul")
-        PAY_AMT4 = st.number_input("Payment Amount Jun")
-        PAY_AMT5 = st.number_input("Payment Amount May")
-        PAY_AMT6 = st.number_input("Payment Amount Apr")
+with col2:
+    PAY_0 = st.number_input("Pay 0")
+    PAY_2 = st.number_input("Pay 2")
+    PAY_3 = st.number_input("Pay 3")
+    PAY_4 = st.number_input("Pay 4")
+    PAY_5 = st.number_input("Pay 5")
+    PAY_6 = st.number_input("Pay 6")
 
-        # Prediction Button
-        if st.button("Predict Default"):
-            input_data = np.array([[LIMIT_BAL, SEX, EDUCATION, MARRIAGE, AGE,
-                                    PAY_0, PAY_2, PAY_3, PAY_4, PAY_5, PAY_6,
-                                    BILL_AMT1, BILL_AMT2, BILL_AMT3, BILL_AMT4, BILL_AMT5, BILL_AMT6,
-                                    PAY_AMT1, PAY_AMT2, PAY_AMT3, PAY_AMT4, PAY_AMT5, PAY_AMT6]])
+with col3:
+    BILL_AMT1 = st.number_input("Bill Amount 1")
+    BILL_AMT2 = st.number_input("Bill Amount 2")
+    BILL_AMT3 = st.number_input("Bill Amount 3")
+    BILL_AMT4 = st.number_input("Bill Amount 4")
+    BILL_AMT5 = st.number_input("Bill Amount 5")
+    BILL_AMT6 = st.number_input("Bill Amount 6")
 
-            try:
-                prediction = model.predict(input_data)
-                if prediction[0] == 1:
-                    st.error("Customer will DEFAULT payment next month")
-                else:
-                    st.success("Customer will NOT default payment")
-            except Exception as e:
-                st.error(f"Prediction failed: {e}")
+PAY_AMT1 = st.number_input("Pay Amount 1")
+PAY_AMT2 = st.number_input("Pay Amount 2")
+PAY_AMT3 = st.number_input("Pay Amount 3")
+PAY_AMT4 = st.number_input("Pay Amount 4")
+PAY_AMT5 = st.number_input("Pay Amount 5")
+PAY_AMT6 = st.number_input("Pay Amount 6")
+
+# prediction button
+if st.button("Predict Default Risk"):
+
+    features = np.array([[
+        LIMIT_BAL, SEX, EDUCATION, MARRIAGE, AGE,
+        PAY_0, PAY_2, PAY_3, PAY_4, PAY_5, PAY_6,
+        BILL_AMT1, BILL_AMT2, BILL_AMT3, BILL_AMT4, BILL_AMT5, BILL_AMT6,
+        PAY_AMT1, PAY_AMT2, PAY_AMT3, PAY_AMT4, PAY_AMT5, PAY_AMT6
+    ]])
+
+    prediction = model.predict(features)[0]
+
+    if prediction == 1:
+        st.error("⚠️ High Risk: Customer may default next month")
+    else:
+        st.success("✅ Low Risk: Customer likely to repay")
