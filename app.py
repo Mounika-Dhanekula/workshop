@@ -1,6 +1,6 @@
 import streamlit as st
 import numpy as np
-import joblib
+
 import os
 
 MODEL_FILENAME = "model_pipeline.joblib"
@@ -61,3 +61,4 @@ else:
                     st.success("Customer will NOT default payment")
             except Exception as e:
                 st.error(f"Prediction failed: {e}")
+
