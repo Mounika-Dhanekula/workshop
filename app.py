@@ -1,15 +1,16 @@
 import streamlit as st
 import numpy as np
-
+import pickle
 import os
 
-MODEL_FILENAME = "model_pipeline.joblib"
+MODEL_FILENAME = "model.pkl"
 
 if not os.path.exists(MODEL_FILENAME):
     st.error(f"Model file '{MODEL_FILENAME}' not found. Please place it in the same folder as this script.")
 else:
     try:
-        model = joblib.load(MODEL_FILENAME)
+        with open(MODEL_FILENAME, "rb") as f:
+            model = pickle.load(f)
     except Exception as e:
         st.error(f"Failed to load model: {e}")
         model = None
@@ -61,4 +62,3 @@ else:
                     st.success("Customer will NOT default payment")
             except Exception as e:
                 st.error(f"Prediction failed: {e}")
-
